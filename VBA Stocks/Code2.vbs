@@ -1,0 +1,91 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
+Attribute VB_Name = "Sheet1"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = True
+Sub Ticker1()
+
+'Define Ticker, Last Column and Row, Year open and close, and Total Volume
+Dim T As String 'ticker
+Dim ws As Worksheet
+Dim LC As Long 'LastColumn
+Dim LR As Long 'LastRow"
+Dim PC As Double 'Percent Change
+Dim YO As Double 'YearlyOpen
+Dim YCh As Double 'YearlyChange
+Dim YC As Double 'YearlyClose
+Dim TV As Variant 'TotalValue
+Dim Col As Integer 'Start
+TV = 0
+Col = 2
+YC = 0
+YO = 0
+YCh = 0
+
+For Each ws In Worksheets
+
+
+
+
+ws.Cells(1, 9) = "Ticker"
+ws.Cells(1, 10) = "Yearly Change"
+ws.Cells(1, 11) = "Percent Change"
+ws.Cells(1, 12) = "Total Stock Value"
+
+YO = ws.Cells(2, 3)
+T = ws.Cells(2, 1)
+
+LR = ws.Cells(Rows.Count, 1).End(xlUp).Row
+LC = ws.Cells(1, Columns.Count).End(xlToLeft).Column
+    
+For i = 2 To LR
+    If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+
+        TV = TV + ws.Cells(i, 7)
+        
+        ws.Range("K" & Col) = Str(Round(PC, 2)) + "%"
+        
+        YC = ws.Cells(i, 6)
+        YCh = YC - YO
+        ws.Range("I" & Col) = T
+        ws.Range("J" & Col) = YCh
+        
+        ws.Range("L" & Col) = TV
+        
+        
+        If YO <> 0 And YCh <> 0 Then
+        PC = YCh / YO
+        Else: PC = 0
+        End If
+        
+        ws.Range("K" & Col) = PC
+        Col = Col + 1
+        YO = ws.Cells(i + 1, 3)
+        TV = 0
+        T = ws.Cells(i + 1, 1)
+        Else
+        
+        TV = TV + ws.Cells(i, 7)
+    
+    End If
+    Next i
+    
+    For g = 2 To LR
+        If ws.Cells(g, 10) > 0 Then
+        ws.Cells(g, 10).Interior.ColorIndex = 4
+    
+        ElseIf ws.Cells(g, 10) < 0 Then
+        ws.Cells(g, 10).Interior.ColorIndex = 3
+        End If
+    
+        Next g
+    
+Col = 2
+
+Next ws
+
+End Sub
